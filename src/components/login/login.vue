@@ -97,6 +97,8 @@ export default {
           width: 100%;
           height: 40px;
           margin-top: 15px;
+          border-radius: 10px;
+          outline: none;
         }
       }
       &-register {
