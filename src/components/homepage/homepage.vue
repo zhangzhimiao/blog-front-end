@@ -4,12 +4,12 @@
   </div>
 </template>
 <script>
-import TobBar from "../common/topbar";
+import TobBar from './topbar'
 export default {
   components: {
     tobbar: TobBar
   }
-};
+}
 </script>
 <style lang="less">
 </style>

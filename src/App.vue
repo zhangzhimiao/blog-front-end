@@ -25,4 +25,7 @@ body {
   width: 100%;
   height: 100%;
 }
+.ivu-menu {
+  padding-left: 15px !important;
+}
 </style>
