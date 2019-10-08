@@ -22,24 +22,29 @@
 </template>
 
 <script>
-import { service } from '../../utils/service'
+import { service } from "../../utils/service";
 export default {
   data() {
     return {
-      name: '',
-      password: ''
-    }
+      name: "",
+      password: ""
+    };
   },
   methods: {
-    login() {},
+    login() {
+      service.login(this.name, this.password).then(d => {
+        // eslint-disable-next-line no-console
+        console.log(d.data);
+      });
+    },
     register() {
       service.register(this.name, this.password).then(d => {
         // eslint-disable-next-line no-console
-        console.log(d)
-      })
+        console.log(d);
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="less">
