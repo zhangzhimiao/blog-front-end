@@ -4,7 +4,7 @@
       <div class="login-wrap-title">欢迎使用博客系统</div>
       <div class="login-wrap-input-wrap">
         <div>
-          <input type="text" placeholder="请输入用户名：)" v-model="name" />
+          <input type="text" placeholder="请输入用户名: )" v-model="name" />
           <br />
           <input type="password" placeholder="请输入密码" v-model="password" />
           <br />
@@ -99,6 +99,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-width: 380px;
+  min-height: 450px;
   &-wrap {
     width: 380px;
     height: 450px;

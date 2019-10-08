@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../components/login/login";
+import Index from "../components/homepage/homepage";
 
 Vue.use(VueRouter);
 
@@ -10,7 +11,7 @@ export default new VueRouter({
     {
       path: "/",
       name: "index",
-      component: Login
+      component: Index
     },
     {
       path: "/login",
