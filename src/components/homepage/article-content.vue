@@ -1,25 +1,17 @@
 <template>
   <div class="content-wrap">
     <div class="nav-wrap">
-      <Menu theme="light" active-name="1">
+      <Menu theme="light" :active-name="0">
         <MenuGroup title="类别">
-          <MenuItem name="1">
+          <MenuItem
+            v-for="(column, index) in columns"
+            :key="index"
+            :name="index"
+          >
             <Icon type="md-document" />
-            文章管理
-          </MenuItem>
-          <MenuItem name="2">
-            <Icon type="md-chatbubbles" />
-            评论管理
+            {{ column.name }}
           </MenuItem>
         </MenuGroup>
-        <MenuItem name="3">
-          <Icon type="md-heart" />
-          用户留存
-        </MenuItem>
-        <MenuItem name="4">
-          <Icon type="md-leaf" />
-          流失用户
-        </MenuItem>
       </Menu>
     </div>
     <div class="list-wrap">
@@ -46,7 +38,7 @@ export default {
     var _this = this;
     const userId = sessionStorage.getItem("userId");
     service.getUserColumns(userId).then(d => {
-      _this.columns = d.data[0].columns;
+      _this.columns = d.data.data[0].columns;
     });
   }
 };
@@ -57,7 +49,8 @@ export default {
   width: 100%;
   max-width: 1400px;
   display: flex;
-  padding: 50px 0;
+  padding: 50px 50px;
+  justify-content: space-between;
   .nav-wrap {
     width: 20%;
   }
