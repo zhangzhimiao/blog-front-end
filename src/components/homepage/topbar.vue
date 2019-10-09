@@ -24,21 +24,16 @@ export default {
   data() {
     return {
       nav: [{ name: "1" }, { name: "2" }],
-      isSignIn: false,
       loginText: "登录",
       registerText: "注册"
     };
   },
   computed: {
+    isSignIn() {
+      return this.$store.state.isSignIn;
+    },
     username() {
-      var _this = this;
-      const username = sessionStorage.getItem("userName");
-      if (username) {
-        _this.isSignIn = true;
-      } else {
-        _this.isSignIn = false;
-      }
-      return username;
+      return this.$store.state.userName;
     }
   },
   methods: {
@@ -50,9 +45,7 @@ export default {
       this.$router.push("login");
     },
     signout() {
-      this.isSignIn = false;
-      sessionStorage.removeItem("userId");
-      sessionStorage.removeItem("userName");
+      this.$store.commit("setIsSignIn", false);
     }
   }
 };

@@ -1,8 +1,8 @@
 <template>
   <div class="homepage">
-    <tobbar />
+    <tobbar @setLoginState="setLoginState" />
     <div class="article-content-wrap">
-      <article-content />
+      <article-content :id="userId" />
     </div>
   </div>
 </template>
@@ -13,6 +13,16 @@ export default {
   components: {
     tobbar: TobBar,
     articleContent: ArtileContent
+  },
+  data() {
+    return {
+      userId: ""
+    };
+  },
+  methods: {
+    setLoginState() {
+      alert();
+    }
   }
 };
 </script>

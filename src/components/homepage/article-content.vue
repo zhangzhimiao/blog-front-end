@@ -27,7 +27,9 @@
 <script>
 import { service } from "../../utils/service";
 export default {
-  props: ["title", "content", "author"],
+  props: {
+    userId: String
+  },
   data() {
     return {
       columns: []
@@ -36,8 +38,7 @@ export default {
   computed: {},
   mounted() {
     var _this = this;
-    const userId = sessionStorage.getItem("userId");
-    service.getUserColumns(userId).then(d => {
+    service.getUserColumns(this.userId).then(d => {
       _this.columns = d.data.data[0].columns;
     });
   }
