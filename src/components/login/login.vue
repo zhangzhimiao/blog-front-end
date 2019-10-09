@@ -47,6 +47,7 @@
 
 <script>
 import { service } from "../../utils/service";
+
 export default {
   data() {
     return {
@@ -62,14 +63,20 @@ export default {
     },
     enablelogin() {
       service.login(this.name, this.password).then(d => {
-        // eslint-disable-next-line no-console
-        console.log(d);
+        if (d.data.code === 0 && d.data.data) {
+          sessionStorage.setItem("userId", d.data.data.id);
+          sessionStorage.setItem("userName", d.data.data.name);
+          this.$router.push("/");
+        } else {
+          alert("登录失败，请重新登录");
+        }
       });
     },
     register() {
       this.isLogin = false;
     },
     enableregister() {
+      var _this = this;
       if (this.name.length < 2) {
         alert("用户名必须超过两位");
         return;
@@ -83,15 +90,19 @@ export default {
         return;
       }
       service.register(this.name, this.password).then(d => {
-        // eslint-disable-next-line no-console
-        console.log(d);
+        if (d.data.code === 0 && d.data.data) {
+          _this.isLogin = true;
+          alert("注册成功");
+        } else {
+          alert("注册失败，请重新注册");
+        }
       });
     }
   }
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .login {
   background: linear-gradient(white, black, white);
   width: 100%;

@@ -1,14 +1,21 @@
 <template>
   <div class="topbar-wrap">
-    <div class="topbar-logo">
-      BLOG
-      <div class="topbar-user-info">
-        <span>{{login}}</span>
-      </div>
+    <div class="blog center">BLOG</div>
+    <div class="motto center">If you to do, you can arrived!</div>
+    <div class="user-menu center">
+      <span class="login" @click="login" v-show="!isSignIn">{{
+        loginText
+      }}</span
+      ><span class="login" @click="show" v-show="isSignIn">
+        {{ username }} </span
+      >&nbsp;|&nbsp;
+      <span class="register" @click="register" v-show="!isSignIn">{{
+        registerText
+      }}</span>
+      <span class="register" @click="signout" v-show="isSignIn">{{
+        "注销"
+      }}</span>
     </div>
-    <Menu mode="horizontal" theme="dark" :active-name="0">
-      <MenuItem v-for="(item, index) in nav" :name="index" :key="index">{{ item.name }}</MenuItem>
-    </Menu>
   </div>
 </template>
 
@@ -16,33 +23,65 @@
 export default {
   data() {
     return {
-      nav: [{ name: '1' }, { name: '2' }]
-    }
+      nav: [{ name: "1" }, { name: "2" }],
+      isSignIn: false,
+      loginText: "登录",
+      registerText: "注册"
+    };
   },
   computed: {
+    username() {
+      var _this = this;
+      const username = sessionStorage.getItem("userName");
+      if (username) {
+        _this.isSignIn = true;
+      } else {
+        _this.isSignIn = false;
+      }
+      return username;
+    }
+  },
+  methods: {
     login() {
-      return sessionStorage.getItem('user') !== null
-        ? sessionStorage.getItem('user').name
-        : '登录|注册'
+      this.$router.push("login");
+    },
+    show() {},
+    register() {
+      this.$router.push("login");
+    },
+    signout() {
+      this.isSignIn = false;
+      sessionStorage.removeItem("userId");
+      sessionStorage.removeItem("userName");
     }
   }
-}
+};
 </script>
 
-<style lang="less">
-.topbar {
-  &-logo {
-    padding: 30px;
-    font-size: 30px;
-    color: #fff;
-    background-color: rgb(81, 90, 110);
-    border-bottom: 1px solid #fff;
+<style lang="less" scoped>
+.topbar-wrap {
+  background-color: #fff;
+  display: flex;
+  height: 80px;
+  border-bottom: 1px solid #000;
+  .center {
+    display: flex;
+    align-items: center;
   }
-  &-user-info {
-    float: right;
-    font-size: 20px;
-    padding-top: 7px;
-    padding-right: 15px;
+  .blog {
+    width: 15%;
+    height: 100%;
+    font-size: 30px;
+    padding-left: 35px;
+  }
+  .motto {
+    width: 75%;
+    height: 100%;
+    justify-content: center;
+  }
+  .user-menu {
+    width: 10%;
+    height: 100%;
   }
 }
 </style>
