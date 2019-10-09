@@ -21,6 +21,9 @@ export class Service {
       }
     });
   }
+  getUserColumns(userid) {
+    return this.instance.get(`person/columns/${userid}`);
+  }
 }
 
 export const service = new Service();
