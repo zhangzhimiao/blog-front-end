@@ -9,7 +9,7 @@ export default new VueRouter({
   mode: "hash",
   routes: [
     {
-      path: "/",
+      path: "/index",
       name: "index",
       component: Index
     },
@@ -17,6 +17,10 @@ export default new VueRouter({
       path: "/login",
       name: "login",
       component: Login
+    },
+    {
+      path: "*",
+      redirect: "/index"
     }
   ]
 });
