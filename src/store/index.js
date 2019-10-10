@@ -1,12 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { service } from "../utils/service";
+
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
     userId: "",
     userName: "",
-    isSignIn: false
+    isSignIn: false,
+    allColumns: []
   },
   getters: {},
   mutations: {
@@ -18,8 +21,23 @@ const store = new Vuex.Store({
     },
     setIsSignIn(state, isSignIn) {
       state.isSignIn = isSignIn;
+    },
+    setAllColumns(state, allColumns) {
+      state.allColumns = allColumns;
     }
   },
-  actions: {}
+  actions: {
+    getAllColumns({ commit }) {
+      commit("setAllColumns", []);
+      const columns = [];
+      service.getAllColumns().then(allColumns => {
+        const tempColumns = allColumns.data.data;
+        for (let x in tempColumns) {
+          columns.push(tempColumns[x]);
+        }
+        commit("setAllColumns", columns);
+      });
+    }
+  }
 });
 export default store;

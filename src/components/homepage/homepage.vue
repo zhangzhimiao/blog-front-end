@@ -1,28 +1,19 @@
 <template>
   <div class="homepage">
-    <tobbar @setLoginState="setLoginState" />
+    <tobbar />
     <div class="article-content-wrap">
-      <article-content :id="userId" />
+      <router-view></router-view>
     </div>
   </div>
 </template>
 <script>
 import TobBar from "./topbar";
-import ArtileContent from "./article-content";
 export default {
   components: {
-    tobbar: TobBar,
-    articleContent: ArtileContent
+    tobbar: TobBar
   },
-  data() {
-    return {
-      userId: ""
-    };
-  },
-  methods: {
-    setLoginState() {
-      alert();
-    }
+  beforeCreate() {
+    this.$store.dispatch("getAllColumns");
   }
 };
 </script>

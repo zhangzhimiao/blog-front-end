@@ -1,14 +1,24 @@
 <template>
   <div class="topbar-wrap">
-    <div class="blog center">BLOG</div>
+    <div class="blog center" @click="goIndexPage">
+      BLOG
+    </div>
     <div class="motto center">If you to do, you can arrived!</div>
     <div class="user-menu center">
       <span class="login" @click="login" v-show="!isSignIn">{{
         loginText
-      }}</span
-      ><span class="login" @click="show" v-show="isSignIn">
-        {{ username }} </span
-      >&nbsp;|&nbsp;
+      }}</span>
+      <Dropdown class="login" @on-click="dropMenu" v-show="isSignIn">
+        <a href="javascript:void(0)">
+          {{ username }}
+          <Icon type="ios-arrow-down"></Icon>
+        </a>
+        <DropdownMenu slot="list">
+          <DropdownItem name="homepage">个人主页</DropdownItem>
+          <DropdownItem name="publishArticle">发布文章</DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      &nbsp;|&nbsp;
       <span class="register" @click="register" v-show="!isSignIn">{{
         registerText
       }}</span>
@@ -37,14 +47,20 @@ export default {
     }
   },
   methods: {
-    login() {
-      this.$router.push("login");
+    goIndexPage() {
+      this.$router.push("/index/home");
     },
-    show() {},
+    login() {
+      this.$router.push("/login");
+    },
+    dropMenu(name) {
+      this.$router.push(`/index/${name}`);
+    },
     register() {
-      this.$router.push("login");
+      this.$router.push("/login");
     },
     signout() {
+      location.reload();
       this.$store.commit("setIsSignIn", false);
     }
   }
@@ -67,14 +83,25 @@ export default {
     font-size: 30px;
     padding-left: 35px;
   }
+  .blog:hover {
+    cursor: pointer;
+  }
   .motto {
-    width: 75%;
+    width: 70%;
     height: 100%;
     justify-content: center;
   }
   .user-menu {
-    width: 10%;
+    width: 15%;
     height: 100%;
+    justify-content: flex-end;
+    padding-right: 30px;
+    span {
+      cursor: pointer;
+    }
+    span:hover {
+      color: red;
+    }
   }
 }
 </style>

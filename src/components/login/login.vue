@@ -63,7 +63,9 @@ export default {
     },
     enablelogin() {
       service.login(this.name, this.password).then(d => {
-        if (d.data.code === 0 && d.data.data) {
+        // eslint-disable-next-line
+        console.log(d);
+        if (d.data.code === 0 && d.data.data.id) {
           this.$store.commit("setUserId", d.data.data.id);
           this.$store.commit("setUserName", d.data.data.name);
           this.$store.commit("setIsSignIn", true);
