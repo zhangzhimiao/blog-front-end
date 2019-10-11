@@ -140,7 +140,7 @@ export default {
   padding: 50px 50px;
   justify-content: space-between;
   .nav-wrap {
-    width: 20%;
+    margin-right: 15px;
   }
   .list-wrap {
     width: 75%;

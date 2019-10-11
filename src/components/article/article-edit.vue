@@ -94,23 +94,21 @@ export default {
       return this.$store.state.allColumns;
     }
   },
-  created() {
+
+  mounted() {
     var _this = this;
     service.getDetailArticle(_this.articleId).then(d => {
       _this.article = d.data.data.d;
+      _this.title = _this.article.title;
+      _this.editor = new Editor({
+        el: _this.$refs.editor,
+        initialEditType: "markdown",
+        height: "800px",
+        initialValue: _this.article.content
+      });
       _this.getArticleLabels();
       _this.getArticleColumns();
     });
-  },
-  mounted() {
-    var _this = this;
-    _this.editor = new Editor({
-      el: _this.$refs.editor,
-      initialEditType: "markdown",
-      height: "800px"
-    });
-    _this.editor.setValue(_this.article.content);
-    _this.title = _this.article.title;
   },
   methods: {
     getArticleLabels() {
@@ -126,9 +124,11 @@ export default {
     getArticleColumns() {
       var _this = this;
       service.getColumnsByArticleId(_this.articleId).then(d => {
-        // eslint-disable-next-line
-        console.log(d);
-        _this.articleColumns = d;
+        const columns = [];
+        for (let x in d) {
+          columns.push(d[x]);
+        }
+        _this.articleColumns = columns;
       });
     },
     publish() {

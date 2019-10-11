@@ -193,16 +193,9 @@ export class Service {
     return this.instance.get(`article-column/article/${articleId}`).then(d => {
       const ids = [];
       for (let x in d.data.data.d) {
-        // eslint-disable-next-line no-console
-        console.log(d.data.data.d[x]);
         ids.push(d.data.data.d[x].columnId);
       }
-      // eslint-disable-next-line no-console
-      console.log(ids);
-      return this.getColumnsByIds(ids).then(d => {
-        // eslint-disable-next-line no-console
-        console.log(d);
-      });
+      return this.getColumnsByIds(ids).then(d => d);
     });
   }
 
@@ -215,7 +208,7 @@ export class Service {
   getColumnsByIds(ids) {
     return this.instance
       .get(`column/columns`, { params: { ids } })
-      .then(d => d.data.data.d);
+      .then(d => d.data.data);
   }
 }
 
