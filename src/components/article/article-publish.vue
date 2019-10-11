@@ -60,8 +60,8 @@
           </div>
         </div>
         <div class="button-wrap">
-          <Button @click="enablePublish">发布</Button>
-          <Button type="error" @click="hiddenMask">取消</Button>
+          <Button type="error" @click="enablePublish">发布</Button>
+          <Button @click="hiddenMask">取消</Button>
         </div>
       </div>
     </div>
@@ -104,10 +104,21 @@ export default {
   methods: {
     publish() {
       this.publishMask = true;
+      document.body.style.overflow = "hidden";
     },
     enablePublish() {
       var _this = this;
       if (_this.$store.state.isSignIn) {
+        if (_this.title === "") {
+          alert("请输入文章标题");
+          this.publishMask = false;
+          document.body.style.overflow = "";
+          return;
+        }
+        if (_this.articleColumns.length === 0) {
+          alert("请选择文章栏目");
+          return;
+        }
         service
           .publishArticle(
             _this.$store.state.userId,
@@ -120,6 +131,7 @@ export default {
           .then(d => {
             if (d) {
               this.publishMask = false;
+              document.body.style.overflow = "";
               alert("发布文章成功");
             } else {
               alert("发布文章失败");
@@ -131,6 +143,7 @@ export default {
     },
     hiddenMask() {
       this.publishMask = false;
+      document.body.style.overflow = "";
     },
     columnsChange() {},
     labelsChange() {},

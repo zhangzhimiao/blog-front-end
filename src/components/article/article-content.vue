@@ -2,7 +2,7 @@
   <div class="content-wrap">
     <div class="nav-wrap">
       <Menu theme="light" :active-name="0">
-        <MenuGroup title="类别">
+        <MenuGroup title="栏目">
           <MenuItem
             v-for="(column, index) in columns"
             :key="index"
@@ -19,9 +19,11 @@
     <div class="list-wrap">
       <List border v-if="articleList.length > 0">
         <ListItem v-for="article in articleList" :key="article.id">
-          <div class="list-item-wrap" @click="showArticle(article.id)">
-            <h4>{{ article.title }}</h4>
-            <div class="viewer"><viewer :viewCode="article.content" /></div>
+          <div class="list-item-wrap">
+            <h4 @click="showArticle(article.id)">{{ article.title }}</h4>
+            <div class="viewer" @click="showArticle(article.id)">
+              <viewer :viewCode="article.content" />
+            </div>
             <h5>作者：{{ article.person.name }}</h5>
           </div>
         </ListItem>
@@ -32,7 +34,7 @@
 
 <script>
 import { service } from "../../utils/service";
-import Viewer from "../article-publish-edit-viewer/article-viewer";
+import Viewer from "./article-viewer";
 
 export default {
   components: {
@@ -74,8 +76,7 @@ export default {
   },
   beforeMount() {
     var _this = this;
-    // eslint-disable-next-line
-    console.log(_this.userId);
+
     if (_this.userId === "") {
       const columns = [];
       service.getAllColumns().then(allColumns => {
