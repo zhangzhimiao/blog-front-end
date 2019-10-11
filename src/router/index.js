@@ -2,9 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../components/login/login";
 import Index from "../components/homepage/homepage";
-import ArtileContent from "../components/homepage/article-content";
-import ArticleDetail from "../components/homepage/article-detail";
-import PublishArticle from "../components/article-publish-edit-viewer/article-publish";
+import ArtileContent from "../components/article/article-content";
+import ArticleDetail from "../components/article/article-detail";
+import PublishArticle from "../components/article/article-publish";
 
 Vue.use(VueRouter);
 
