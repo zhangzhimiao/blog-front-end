@@ -7,60 +7,38 @@
     <div class="publish-commit-button">
       <Button @click="publish">发布</Button>
     </div>
-    <div
-      class="enable-publish-wrap"
-      v-show="publishMask"
-      @click.self="hiddenMask"
-    >
+    <div class="enable-publish-wrap" v-show="publishMask" @click.self="hiddenMask">
       <div class="article-info-wrap">
         <div class="article-info-title">添加文章信息</div>
         <div class="row-wrap">
           <div class="row-name">文章所属栏目</div>
-          <CheckboxGroup
-            v-model="articleColumns"
-            @on-change.self="columnsChange"
-          >
+          <CheckboxGroup v-model="articleColumns" @on-change.self="columnsChange">
             <Checkbox
               v-for="column in allColumns"
               :key="column.id"
               :label="column.id"
-            >
-              {{ column.name }}
-            </Checkbox>
+            >{{ column.name }}</Checkbox>
           </CheckboxGroup>
         </div>
         <div class="row-wrap">
           <div class="row-name">文章是否公开</div>
           <RadioGroup v-model="isPublic">
-            <Radio label="0">
-              是
-            </Radio>
-            <Radio label="1">
-              否
-            </Radio>
+            <Radio label="0">是</Radio>
+            <Radio label="1">否</Radio>
           </RadioGroup>
         </div>
         <div class="row-wrap noborder">
           <div class="row-name">添加文章标签</div>
-          <Input
-            v-model="articleLabel"
-            placeholder="输入标签"
-            style="width: 300px"
-          /><Button @click="addLabel">添加</Button>
+          <Input v-model="articleLabel" placeholder="输入标签" style="width: 300px" />
+          <Button @click="addLabel">添加</Button>
           <div class="labels-wrap">
             <CheckboxGroup v-model="labels" @on-change.self="labelsChange">
-              <Checkbox
-                v-for="(label, index) in labels"
-                :key="index"
-                :label="label"
-              >
-                {{ label }}
-              </Checkbox>
+              <Checkbox v-for="(label, index) in labels" :key="index" :label="label">{{ label }}</Checkbox>
             </CheckboxGroup>
           </div>
         </div>
         <div class="button-wrap">
-          <Button type="error" @click="enablePublish">发布</Button>
+          <Button type="error" @click="enableEdit">发布</Button>
           <Button @click="hiddenMask">取消</Button>
         </div>
       </div>
@@ -69,119 +47,129 @@
 </template>
 
 <script>
-import "codemirror/lib/codemirror.css";
-import "tui-editor/dist/tui-editor.css";
-import "tui-editor/dist/tui-editor-contents.css";
-import "highlight.js/styles/github.css";
-import Editor from "tui-editor";
-import { service } from "../../utils/service";
+import 'codemirror/lib/codemirror.css'
+import 'tui-editor/dist/tui-editor.css'
+import 'tui-editor/dist/tui-editor-contents.css'
+import 'highlight.js/styles/github.css'
+import Editor from 'tui-editor'
+import { service } from '../../utils/service'
 
 export default {
   data() {
     return {
-      title: "",
+      title: '',
       publishMask: false,
       articleColumns: [],
-      isPublic: "0",
-      articleLabel: "",
+      isPublic: '0',
+      articleLabel: '',
       labels: [],
       articleId: this.$route.params.articleId,
       article: {}
-    };
+    }
   },
   computed: {
     allColumns() {
-      return this.$store.state.allColumns;
+      return this.$store.state.allColumns
     }
   },
 
   mounted() {
-    var _this = this;
+    var _this = this
     service.getDetailArticle(_this.articleId).then(d => {
-      _this.article = d.data.data.d;
-      _this.title = _this.article.title;
+      _this.article = d.data.data.d
+      _this.title = _this.article.title
       _this.editor = new Editor({
         el: _this.$refs.editor,
-        initialEditType: "markdown",
-        height: "800px",
+        initialEditType: 'markdown',
+        height: '800px',
         initialValue: _this.article.content
-      });
-      _this.getArticleLabels();
-      _this.getArticleColumns();
-    });
+      })
+      _this.getArticleLabels()
+      _this.getArticleColumns()
+    })
   },
   methods: {
     getArticleLabels() {
-      var _this = this;
+      var _this = this
       service.getLabelsByArticleId(_this.articleId).then(d => {
-        const labels = [];
+        const labels = []
         for (let x in d) {
-          labels.push(d[x].name);
+          labels.push(d[x].name)
         }
-        _this.labels = labels;
-      });
+        _this.labels = labels
+      })
     },
     getArticleColumns() {
-      var _this = this;
+      var _this = this
       service.getColumnsByArticleId(_this.articleId).then(d => {
-        const columns = [];
-        for (let x in d) {
-          columns.push(d[x]);
+        if (!d.message) {
+          const columns = []
+          for (let x in d) {
+            columns.push(d[x])
+          }
+          _this.articleColumns = columns
         }
-        _this.articleColumns = columns;
-      });
+      })
     },
     publish() {
-      this.publishMask = true;
-      document.body.style.overflow = "hidden";
+      this.publishMask = true
+      document.body.style.overflow = 'hidden'
     },
-    enablePublish() {
-      var _this = this;
+    enableEdit() {
+      var _this = this
       if (_this.$store.state.isSignIn) {
-        if (_this.title === "") {
-          alert("请输入文章标题");
-          this.publishMask = false;
-          document.body.style.overflow = "";
-          return;
+        if (_this.title === '') {
+          alert('请输入文章标题')
+          this.publishMask = false
+          document.body.style.overflow = ''
+          return
         }
         if (_this.articleColumns.length === 0) {
-          alert("请选择文章栏目");
-          return;
+          alert('请选择文章栏目')
+          return
         }
+        const columns = _this.articleColumns.map(d => {
+          return d
+        })
         service
-          .publishArticle(
+          .updateArticle(
+            _this.articleId,
             _this.$store.state.userId,
             _this.editor.getValue(),
             _this.isPublic,
             _this.title,
-            _this.articleColumns,
+            columns,
             _this.labels
           )
           .then(d => {
             if (d) {
-              this.publishMask = false;
-              document.body.style.overflow = "";
-              alert("发布文章成功");
+              this.publishMask = false
+              document.body.style.overflow = ''
+              alert('编辑文章成功')
+              this.$router.push({
+                name: 'article',
+                params: { articleId: _this.articleId }
+              })
             } else {
-              alert("发布文章失败");
+              alert('编辑文章失败')
             }
-          });
+          })
       } else {
-        alert("请保存文章后重新登录发布");
+        alert('请保存文章后重新登录編輯')
       }
     },
     hiddenMask() {
-      this.publishMask = false;
-      document.body.style.overflow = "";
+      this.publishMask = false
+      document.body.style.overflow = ''
     },
     columnsChange() {},
     labelsChange() {},
     addLabel() {
-      this.labels.push(this.label);
-      this.label = "";
+      this.labels.push(this.articleLabel)
+      this.articleLabel = ''
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 .editor-wrap {
