@@ -60,6 +60,9 @@ export default {
       this.$router.push("/login");
     },
     signout() {
+      // sessionStorage.removeItem("setUserId");
+      // sessionStorage.removeItem("setUserName");
+      // sessionStorage.removeItem("setIsAdmin");
       this.$router.push("/index/home");
       location.reload();
       this.$store.commit("setIsSignIn", false);

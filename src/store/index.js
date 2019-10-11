@@ -9,7 +9,8 @@ const store = new Vuex.Store({
     userId: "",
     userName: "",
     isSignIn: false,
-    allColumns: []
+    allColumns: [],
+    isAdmin: ""
   },
   getters: {},
   mutations: {
@@ -24,6 +25,9 @@ const store = new Vuex.Store({
     },
     setAllColumns(state, allColumns) {
       state.allColumns = allColumns;
+    },
+    setIsAdmin(state, isAdmin) {
+      state.isAdmin = isAdmin;
     }
   },
   actions: {

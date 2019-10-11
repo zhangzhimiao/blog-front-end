@@ -66,8 +66,12 @@ export default {
         if (d.data.code === 0 && d.data.data.id) {
           this.$store.commit("setUserId", d.data.data.id);
           this.$store.commit("setUserName", d.data.data.name);
+          this.$store.commit("setIsAdmin", d.data.data.isAdmin);
           this.$store.commit("setIsSignIn", true);
           this.$router.push("/");
+          // sessionStorage.setItem("setUserId", d.data.data.id);
+          // sessionStorage.setItem("setUserName", d.data.data.name);
+          // sessionStorage.setItem("setIsAdmin", d.data.data.isAdmin);
         } else {
           alert("登录失败，请重新登录");
         }

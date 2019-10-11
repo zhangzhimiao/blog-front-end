@@ -7,7 +7,7 @@
   </div>
 </template>
 <script>
-import TobBar from "./topbar";
+import TobBar from "../topbar/topbar";
 export default {
   components: {
     tobbar: TobBar

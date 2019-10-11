@@ -19,8 +19,37 @@
         </div>
       </div>
       <div class="comment">
-        <Input v-model="comment" placeholder="评论内容" style="width: 300px" />
-        <Button class="care-button" @click="addComment">添加评论</Button>
+        <div class="publish-comment">
+          <Input
+            v-model="comment"
+            placeholder="评论内容"
+            style="width: 300px"
+          />
+          <Button class="care-button" @click="addComment">添加评论</Button>
+        </div>
+        <div class="comment-list">
+          <List border v-if="comments.length > 0">
+            <ListItem v-for="comment in comments" :key="comment.id">
+              <div class="comment-list-item-wrap">
+                <div class="item-content">
+                  <h3>
+                    {{ comment.personName }}
+                  </h3>
+                  <p>{{ comment.content }}</p>
+                  <p class="comment-time">
+                    发布时间:&nbsp;{{ commentTime(comment.commentTime) }}
+                  </p>
+                </div>
+                <span
+                  v-if="isAminOrAuthor"
+                  class="comment-delete"
+                  @click="deleteComment(comment.id)"
+                  >删除</span
+                >
+              </div>
+            </ListItem>
+          </List>
+        </div>
       </div>
     </div>
     <div v-else class="error">
@@ -32,6 +61,7 @@
 <script>
 import { service } from "../../utils/service";
 import Viewer from "./article-viewer";
+import { formatTime } from "../../utils/time";
 
 export default {
   components: {
@@ -57,12 +87,19 @@ export default {
     },
     isCare() {
       return this.care ? "取消关注" : "关注";
+    },
+    isAminOrAuthor() {
+      return (
+        this.$store.state.isAdmin === 0 ||
+        this.article.person.id === this.$store.state.userId
+      );
     }
   },
   created() {
     var _this = this;
     service.getDetailArticle(_this.articleId).then(d => {
       _this.article = d.data.data.d;
+      _this.getComments();
       if (this.$store.state.isSignIn) {
         service
           .judgeIfLike(_this.$store.state.userId, _this.articleId)
@@ -95,7 +132,55 @@ export default {
     });
   },
   methods: {
-    addComment() {},
+    commentTime(time) {
+      return formatTime(time);
+    },
+    getComments() {
+      var _this = this;
+      service.getComments(_this.articleId).then(d => {
+        const commentsData = d.data.data;
+        const commentList = [];
+        for (let x in commentsData) {
+          commentList.push(commentsData[x]);
+        }
+        _this.comments = commentList;
+      });
+    },
+    addComment() {
+      if (!this.$store.state.isSignIn) {
+        alert("请先登录");
+        return;
+      }
+      var _this = this;
+      service
+        .addComment(
+          _this.articleId,
+          _this.$store.state.userId,
+          _this.comment,
+          _this.$store.state.userName
+        )
+        .then(d => {
+          if (d) {
+            alert("评论成功");
+            _this.getComments();
+            _this.comment = "";
+          } else {
+            alert("评论失败");
+          }
+        });
+    },
+    deleteComment(commentId) {
+      var _this = this;
+      service.deleteComment(commentId).then(d => {
+        _this.getComments();
+        if (d) {
+          alert("删除成功");
+          _this.getComments();
+        } else {
+          alert("删除失败");
+        }
+      });
+    },
     operateCare() {
       if (!this.$store.state.isSignIn) {
         alert("请先登录");
@@ -222,7 +307,7 @@ export default {
     display: flex;
     margin: 0 auto;
     justify-content: center;
-    padding-bottom: 20px;
+    padding: 20px 0;
   }
   .like:hover {
     color: red;
@@ -236,10 +321,28 @@ export default {
     border-top: 1px solid rgb(204, 204, 204);
     padding-top: 20px;
     width: 70%;
-    display: flex;
     margin: 0 auto;
+    .publish-comment {
+      padding-bottom: 20px;
+    }
     button {
       margin-left: 20px;
+    }
+    .comment-delete {
+      font-size: 10px;
+    }
+    .comment-delete:hover {
+      color: red;
+      cursor: pointer;
+    }
+    .item-content {
+      padding: 10px 0;
+    }
+    .comment-time {
+      font-size: 10px;
+    }
+    h3 {
+      padding-bottom: 5px;
     }
   }
 }

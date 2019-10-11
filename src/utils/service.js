@@ -112,6 +112,111 @@ export class Service {
       })
       .then(d => !!d.data.data.d1);
   }
+
+  judgeIfCare(careId, beCaredId) {
+    return this.instance
+      .get(`person-care/care-info/${careId}/${beCaredId}`)
+      .then(d => {
+        return !!d.data.data.d;
+      });
+  }
+
+  addCare(careId, beCaredId) {
+    return this.instance
+      .post(`person-care/care`, {
+        careId,
+        beCaredId
+      })
+      .then(d => {
+        return !!d.data.data.id;
+      });
+  }
+
+  cancelCare(careId, beCaredId) {
+    return this.instance
+      .delete(`person-care/cancel-care`, {
+        data: {
+          careId,
+          beCaredId
+        }
+      })
+      .then(d => {
+        return !!d.data.data.d;
+      });
+  }
+
+  getComments(articleId) {
+    return this.instance.get(`article-comment/comments/${articleId}`);
+  }
+
+  addComment(articleId, personId, content, personName, parentCommentId) {
+    return this.instance
+      .post("article-comment/comment", {
+        articleId,
+        personId,
+        content,
+        personName,
+        parentCommentId
+      })
+      .then(d => {
+        return !!d.data.data.id;
+      });
+  }
+
+  deleteComment(commentId) {
+    return this.instance
+      .delete(`article-comment/delete`, {
+        data: { commentId }
+      })
+      .then(d => {
+        return !!d.data.data.d;
+      });
+  }
+
+  getSelfArticlesByUserId(userId) {
+    return this.instance
+      .get(`article/${userId}/articles`)
+      .then(d => d.data.data.d);
+  }
+
+  getLikesArticleByUserId(userId) {
+    return this.instance.get(`article-like/likes/${userId}`).then(d => {
+      const ids = [];
+      for (let x in d.data.data.d) {
+        ids.push(d.data.data.d[x].articleId);
+      }
+      return this.getArticlesByArticleIds(ids).then(d => d.data.data.d);
+    });
+  }
+
+  getColumnsByArticleId(articleId) {
+    return this.instance.get(`article-column/article/${articleId}`).then(d => {
+      const ids = [];
+      for (let x in d.data.data.d) {
+        // eslint-disable-next-line no-console
+        console.log(d.data.data.d[x]);
+        ids.push(d.data.data.d[x].columnId);
+      }
+      // eslint-disable-next-line no-console
+      console.log(ids);
+      return this.getColumnsByIds(ids).then(d => {
+        // eslint-disable-next-line no-console
+        console.log(d);
+      });
+    });
+  }
+
+  getLabelsByArticleId(articleId) {
+    return this.instance
+      .get(`label/labels/${articleId}`)
+      .then(d => d.data.data.d);
+  }
+
+  getColumnsByIds(ids) {
+    return this.instance
+      .get(`column/columns`, { params: { ids } })
+      .then(d => d.data.data.d);
+  }
 }
 
 export const service = new Service();
