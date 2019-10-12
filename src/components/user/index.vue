@@ -50,7 +50,9 @@
               <viewer :viewCode="article.content" />
             </div>
             <div class="article-operate">
-              <span class="base-operate-style">不再喜欢</span>
+              <span class="base-operate-style" @click="disLike(article.id)"
+                >不再喜欢</span
+              >
             </div>
           </div>
         </ListItem>
@@ -59,14 +61,29 @@
       <List border v-if="careList.length > 0 && this.navSelelct === '关注列表'">
         <ListItem v-for="care in careList" :key="care.id">
           <div class="list-item-wrap">
-            <h4 @click="showArticle(care.id)">{{ care.title }}</h4>
-            <div class="viewer" @click="showArticle(care.id)">
-              <viewer :viewCode="article.content" />
-            </div>
-            <div><span>不再喜欢</span></div>
+            <h4>
+              {{ care.name }}
+              <span class="cancle-care" @click="disCare(care.id)"
+                >取消关注</span
+              >
+            </h4>
           </div>
         </ListItem>
       </List>
+
+      <div class="user-info-center" v-if="this.navSelelct === '个人中心'">
+        <div class="column-manage">管理关注栏目</div>
+        <CheckboxGroup v-model="personColumn" @on-change.self="columnsChange">
+          <Checkbox
+            v-for="column in allColumns"
+            :key="column.id"
+            :label="column.id"
+          >
+            {{ column.name }}
+          </Checkbox>
+        </CheckboxGroup>
+        <Button @click="editColumn">修改栏目</Button>
+      </div>
     </div>
   </div>
 </template>
@@ -82,10 +99,41 @@ export default {
       navSelelct: "我的文章",
       myArticles: [],
       careList: [],
-      likeList: []
+      likeList: [],
+      personColumn: []
     };
   },
+  computed: {
+    allColumns() {
+      return this.$store.state.allColumns;
+    }
+  },
   methods: {
+    getPersonColumn() {
+      var _this = this;
+      service.getColumnsByUserId(_this.$store.state.userId).then(d => {
+        if (d[0].columns) {
+          const columns = [];
+          for (let x in d[0].columns) {
+            columns.push(d[0].columns[x].id);
+          }
+          _this.personColumn = columns;
+        }
+      });
+    },
+    editColumn() {
+      var _this = this;
+      service
+        .editUserColumns(_this.personColumn, _this.$store.state.userId)
+        .then(d => {
+          if (d.data.data.id) {
+            alert("编辑成功");
+            this.getPersonColumn();
+          } else {
+            alert("编辑失败，请重试！");
+          }
+        });
+    },
     toEdit(articleId) {
       this.$router.push({ name: "editArticle", params: { articleId } });
     },
@@ -99,22 +147,83 @@ export default {
         if (name === "点赞文章") {
           _this.getLiskeArticle();
         }
+        if (name === "关注列表") {
+          _this.getCareList();
+        }
+        if (name === "个人中心") {
+          _this.getPersonColumn();
+        }
       }
     },
+    columnsChange() {},
     getMyArticles() {
       var _this = this;
       service.getSelfArticlesByUserId(_this.$store.state.userId).then(d => {
+        if (d.length === 0) {
+          alert("您暂未发布过文章，请发布后再访问该栏");
+        }
         _this.myArticles = d;
       });
     },
     getLiskeArticle() {
       var _this = this;
       service.getLikesArticleByUserId(_this.$store.state.userId).then(d => {
-        _this.likeList = d;
+        if (d) {
+          _this.likeList = d;
+        } else {
+          _this.likeList = [];
+          alert("暂无点赞的文章");
+        }
       });
     },
     editArticle(articleId) {
       this.$router.push({ name: "editArticle", params: { articleId } });
+    },
+    disLike(articleId) {
+      service.cancelLike(this.$store.state.userId, articleId).then(d => {
+        if (d) {
+          alert("取消点赞成功");
+          this.getLiskeArticle();
+        } else {
+          alert("取消点赞失败");
+        }
+      });
+    },
+    disCare(personId) {
+      service.cancelCare(this.$store.state.userId, personId).then(d => {
+        if (d) {
+          alert("取消关注成功");
+          this.getCareList();
+        } else {
+          alert("取消关注失败");
+        }
+      });
+    },
+    showArticle(articleId) {
+      this.$router.push({ name: "article", params: { articleId } });
+    },
+    getCareList() {
+      var _this = this;
+      service.getCaresByCareId(_this.$store.state.userId).then(d => {
+        const ids = [];
+        for (let x in d) {
+          ids.push(d[x].beCarePersonId);
+        }
+        if (ids.length > 0) {
+          service.getPersonsByIds(ids).then(d1 => {
+            const careList = [];
+            for (let x in d1) {
+              careList.push(d1[x]);
+            }
+            if (careList.length > 0) {
+              _this.careList = careList;
+            }
+          });
+        } else {
+          alert("暂无关注的作者");
+          _this.careList = [];
+        }
+      });
     }
   },
   mounted() {
@@ -160,6 +269,14 @@ export default {
     h5 {
       padding-top: 15px;
       color: rgb(83, 90, 108);
+    }
+    .cancle-care {
+      font-weight: bolder;
+      float: right;
+    }
+    .cancle-care:hover {
+      cursor: pointer;
+      color: red;
     }
   }
   .article-operate {

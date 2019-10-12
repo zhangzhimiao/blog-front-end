@@ -1,17 +1,16 @@
-import axios from "axios"
+import axios from "axios";
 
 export class Service {
   instance = axios.create({
-    baseURL: "http://localhost:3000/entity",
-    timeout: 1000
-  })
+    baseURL: "http://localhost:3000/entity"
+  });
   register(name, password) {
     return this.instance.post("person/register", {
       data: {
         name,
         password
       }
-    })
+    });
   }
   login(name, password) {
     return this.instance.post("person/login", {
@@ -19,45 +18,45 @@ export class Service {
         name,
         password
       }
-    })
+    });
   }
   getUserColumns(userId) {
-    return this.instance.get(`person/columns/${userId}`)
+    return this.instance.get(`person/columns/${userId}`);
   }
   getAllColumns() {
-    return this.instance.get(`column/all`)
+    return this.instance.get(`column/all`);
   }
 
   getAllArticles() {
-    return this.instance.get("article/all")
+    return this.instance.get("article/all");
   }
 
   getColumnArticlesByColumnId(columnId) {
-    return this.instance.get(`article-column/column/${columnId}`)
+    return this.instance.get(`article-column/column/${columnId}`);
   }
 
   getArticlesByArticleIds(ids) {
-    return this.instance.get(`article/articles`, { params: { ids } })
+    return this.instance.get(`article/articles`, { params: { ids } });
   }
 
   getDetailArticle(id) {
-    return this.instance.get(`article/detail/${id}`)
+    return this.instance.get(`article/detail/${id}`);
   }
 
   judgeIfLike(userId, articleId) {
     return this.instance
       .get(`article-like/like-info/${userId}/${articleId}`)
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   addLike(userId, articleId) {
     return this.instance
       .post(`article-like/like`, { data: { personId: userId, articleId } })
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   cancelLike(userId, articleId) {
@@ -66,16 +65,16 @@ export class Service {
         data: { personId: userId, articleId: articleId }
       })
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   judgeIfCollected(userId, articleId) {
     return this.instance
       .get(`article-collection/collection/${userId}/${articleId}`)
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   addCollect(userId, articleId) {
@@ -84,8 +83,8 @@ export class Service {
         data: { personId: userId, articleId }
       })
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   cancelCollect(userId, articleId) {
@@ -94,8 +93,8 @@ export class Service {
         data: { personId: userId, articleId: articleId }
       })
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   publishArticle(userId, content, isPublic, title, columnIds, label) {
@@ -110,15 +109,15 @@ export class Service {
           label
         }
       })
-      .then(d => !!d.data.data.d1)
+      .then(d => !!d.data.data.d1);
   }
 
   judgeIfCare(careId, beCaredId) {
     return this.instance
       .get(`person-care/care-info/${careId}/${beCaredId}`)
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   addCare(careId, beCaredId) {
@@ -128,8 +127,8 @@ export class Service {
         beCaredId
       })
       .then(d => {
-        return !!d.data.data.id
-      })
+        return !!d.data.data.id;
+      });
   }
 
   cancelCare(careId, beCaredId) {
@@ -141,12 +140,12 @@ export class Service {
         }
       })
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   getComments(articleId) {
-    return this.instance.get(`article-comment/comments/${articleId}`)
+    return this.instance.get(`article-comment/comments/${articleId}`);
   }
 
   addComment(articleId, personId, content, personName, parentCommentId) {
@@ -159,8 +158,8 @@ export class Service {
         parentCommentId
       })
       .then(d => {
-        return !!d.data.data.id
-      })
+        return !!d.data.data.id;
+      });
   }
 
   deleteComment(commentId) {
@@ -169,46 +168,46 @@ export class Service {
         data: { commentId }
       })
       .then(d => {
-        return !!d.data.data.d
-      })
+        return !!d.data.data.d;
+      });
   }
 
   getSelfArticlesByUserId(userId) {
     return this.instance
       .get(`article/${userId}/articles`)
-      .then(d => d.data.data.d)
+      .then(d => d.data.data.d);
   }
 
   getLikesArticleByUserId(userId) {
     return this.instance.get(`article-like/likes/${userId}`).then(d => {
-      const ids = []
+      const ids = [];
       for (let x in d.data.data.d) {
-        ids.push(d.data.data.d[x].articleId)
+        ids.push(d.data.data.d[x].articleId);
       }
-      return this.getArticlesByArticleIds(ids).then(d => d.data.data.d)
-    })
+      return this.getArticlesByArticleIds(ids).then(d => d.data.data.d);
+    });
   }
 
   getColumnsByArticleId(articleId) {
     return this.instance.get(`article-column/article/${articleId}`).then(d => {
-      const ids = []
+      const ids = [];
       for (let x in d.data.data.d) {
-        ids.push(d.data.data.d[x].columnId)
+        ids.push(d.data.data.d[x].columnId);
       }
-      return this.getColumnsByIds(ids).then(d => d)
-    })
+      return this.getColumnsByIds(ids).then(d => d);
+    });
   }
 
   getLabelsByArticleId(articleId) {
     return this.instance.get(`label/labels/${articleId}`).then(d => {
-      return d.data.data.d
-    })
+      return d.data.data.d;
+    });
   }
 
   getColumnsByIds(ids) {
     return this.instance
       .get(`column/columns`, { params: { ids } })
-      .then(d => d.data.data)
+      .then(d => d.data.data);
   }
 
   updateArticle(
@@ -230,8 +229,35 @@ export class Service {
         columnIds,
         labels
       }
-    })
+    });
+  }
+
+  getCaresByCareId(careId) {
+    return this.instance.get(`person-care/cares/${careId}`).then(d => {
+      return d.data.data.d;
+    });
+  }
+
+  getPersonsByIds(ids) {
+    return this.instance
+      .get(`person/persons`, { params: { ids } })
+      .then(d => d.data.data);
+  }
+
+  getColumnsByUserId(userId) {
+    return this.instance.get(`person/columns/${userId}`).then(d => {
+      return d.data.data;
+    });
+  }
+
+  editUserColumns(columnIds, userId) {
+    return this.instance.post(`person/manage-column`, {
+      data: {
+        columnIds,
+        personId: userId
+      }
+    });
   }
 }
 
-export const service = new Service()
+export const service = new Service();
