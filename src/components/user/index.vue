@@ -82,7 +82,7 @@
             {{ column.name }}
           </Checkbox>
         </CheckboxGroup>
-        <Button @click="editColumn">修改栏目</Button>
+        <Button class="edit-column-button" @click="editColumn">修改栏目</Button>
       </div>
     </div>
   </div>
@@ -250,6 +250,15 @@ export default {
   justify-content: space-between;
   .nav-wrap {
     margin-right: 15px;
+  }
+  .column-manage {
+    font-size: 20px;
+    font-weight: bolder;
+    border-bottom: 1px solid rgb(83, 90, 108);
+    margin-bottom: 20px;
+  }
+  .edit-column-button {
+    margin-top: 20px;
   }
   .list-wrap {
     width: 75%;
